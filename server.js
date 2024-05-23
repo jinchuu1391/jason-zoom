@@ -1,14 +1,23 @@
-const express = require("express");
+// const express = require("express");
+import express from 'express'
 const app = express();
-const server = require("http").Server(app);
-const { v4: uuidv4 } = require("uuid");
-const io = require("socket.io")(server);
-const { ExpressPeerServer } = require("peer");
-const url = require("url");
+import http from 'http'
+const server = http.Server(app);
+// const server = require("http").Server(app);
+// const { v4: uuidv4 } = require("uuid");
+import {v4} from 'uuid'
+// const io = require("socket.io")(server);
+import socketIO from 'socket.io'
+const io = socketIO(server);
+import {ExpressPeerServer} from 'peer'
+// const { ExpressPeerServer } = require("peer");
+import url from 'url'
+// const url = require("url");
 const peerServer = ExpressPeerServer(server, {
     debug: true,
 });
-const path = require("path");
+// const path = require("path");
+import path from 'path'
 
 app.set("view engine", "ejs");
 app.use("/public", express.static(path.join(__dirname, "static")));
