@@ -13,7 +13,7 @@ window.onload = () => {
     });
 };
 
-var peer = new Peer(undefined, {
+const peer = new Peer(undefined, {
     path: "/peerjs",
     host: "/",
     port: "3030",
@@ -21,7 +21,7 @@ var peer = new Peer(undefined, {
 
 let myVideoStream;
 const peers = {};
-var getUserMedia =
+const getUserMedia =
     navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
     navigator.mozGetUserMedia;
@@ -73,9 +73,11 @@ peer.on("open", (id) => {
     socket.emit("join-room", roomId, id, myname);
 });
 
+let ul;
+let li;
 socket.on("createMessage", (message) => {
-    var ul = document.getElementById("messageadd");
-    var li = document.createElement("li");
+    ul = document.getElementById("messageadd");
+    li = document.createElement("li");
     li.className = "message";
     li.appendChild(document.createTextNode(message));
     ul.appendChild(li);
@@ -89,7 +91,7 @@ socket.on("AddName", (username) => {
 const RemoveUnusedDivs = () => {
     //
     alldivs = videoGrids.getElementsByTagName("div");
-    for (var i = 0; i < alldivs.length; i++) {
+    for (let i = 0; i < alldivs.length; i++) {
         e = alldivs[i].getElementsByTagName("video").length;
         if (e == 0) {
             alldivs[i].remove();
