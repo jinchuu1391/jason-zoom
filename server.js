@@ -1,23 +1,21 @@
-// const express = require("express");
 import express from 'express'
-const app = express();
 import http from 'http'
-const server = http.Server(app);
-// const server = require("http").Server(app);
-// const { v4: uuidv4 } = require("uuid");
 import {v4} from 'uuid'
-// const io = require("socket.io")(server);
 import socketIO from 'socket.io'
-const io = socketIO(server);
 import {ExpressPeerServer} from 'peer'
-// const { ExpressPeerServer } = require("peer");
 import url from 'url'
-// const url = require("url");
+import path from 'path'
+
+const app = express();
+
+const server = http.Server(app);
+
+const io = socketIO(server);
+
+// WebRTC 연결을 위한 중개 서버
 const peerServer = ExpressPeerServer(server, {
     debug: true,
 });
-// const path = require("path");
-import path from 'path'
 
 app.set("view engine", "ejs");
 app.use("/public", express.static(path.join(__dirname, "static")));
@@ -30,7 +28,7 @@ app.get("/", (req, res) => {
 app.get("/join", (req, res) => {
     res.redirect(
         url.format({
-            pathname: `/join/${uuidv4()}`,
+            pathname: `/join/${v4()}`,
             query: req.query,
         })
     );
@@ -52,7 +50,7 @@ app.get("/join/:rooms", (req, res) => {
 io.on("connection", (socket) => {
     socket.on("join-room", (roomId, id, myname) => {
         socket.join(roomId);
-        socket.to(roomId).broadcast.emit("user-connected", id, myname);
+        socket.to(roomId).emit("user-connected", id, myname);
 
         socket.on("messagesend", (message) => {
             console.log(message);
@@ -61,11 +59,11 @@ io.on("connection", (socket) => {
 
         socket.on("tellName", (myname) => {
             console.log(myname);
-            socket.to(roomId).broadcast.emit("AddName", myname);
+            socket.to(roomId).emit("AddName", myname);
         });
 
         socket.on("disconnect", () => {
-            socket.to(roomId).broadcast.emit("user-disconnected", id);
+            socket.to(roomId).emit("user-disconnected", id);
         });
     });
 });
