@@ -5,6 +5,7 @@ import socketIO from 'socket.io'
 import {ExpressPeerServer} from 'peer'
 import url from 'url'
 import path from 'path'
+import joinRoutes from './routes/join'
 
 const app = express();
 
@@ -25,27 +26,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "static", "index.html"));
 });
 
-app.get("/join", (req, res) => {
-    res.redirect(
-        url.format({
-            pathname: `/join/${v4()}`,
-            query: req.query,
-        })
-    );
-});
-
-app.get("/joinold", (req, res) => {
-    res.redirect(
-        url.format({
-            pathname: req.query.meeting_id,
-            query: req.query,
-        })
-    );
-});
-
-app.get("/join/:rooms", (req, res) => {
-    res.render("room", { roomid: req.params.rooms, Myname: req.query.name });
-});
+app.use(joinRoutes)
 
 io.on("connection", (socket) => {
     socket.on("join-room", (roomId, id, myname) => {
